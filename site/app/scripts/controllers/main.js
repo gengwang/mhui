@@ -16,12 +16,16 @@ angular.module('mhUI')
     ];
   })
   .controller('NaviListCtrl', function($scope){
+    // icon path is relative to the js (app.js) path?
     $scope.menuTree = {items:[
-                    {header:'File', items:[{header:'New File'}, {header:'Open File'}]},
-                    {header:'Edit', items:[{header:'Copy'}, {header:'Paste'}, {header:'Undo Selection', items:[{header:'Soft Undo'}, {header:'Undo Insert Characters', items:[{header:'Undo Insert All'}]}]}]},
-                    {header:'Selection', items:[{header:'Select All'}]},
-                    {header:'Find'}
+                    {header:'File', icon:'../images/t_stop.png', items:[{header:'New File', icon:'../images/license_plate.png'}, {header:'Open File', icon:'../images/nav_placeholder.png'}]},
+                    {header:'Edit', icon:'../images/nav_placeholder.png', items:[{header:'Copy', icon:'../images/field_init.png'}, {header:'Paste', icon:'../images/nav_placeholder.png'}, 
+                    {header:'Undo Selection', icon:'../images/license_plate.png', items:[{header:'Soft Undo', icon:'../images/field_init.png'}, {header:'Undo Insert Characters', icon:'../images/t_stop.png', items:[{header:'Undo Insert All', icon:'../images/license_plate.png'}]}]}]},
+                    {header:'Selection', items:[{header:'Select All', icon:'../images/nav_placeholder.png'}]},
+                    {header:'Find', icon:'../images/field_init.png'}
                 ]};
     // $scope.path = [1,2,1,0];
     $scope.path = [1,2];
+
+    $scope.menuState = 'icon';
   });

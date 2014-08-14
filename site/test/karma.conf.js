@@ -16,8 +16,13 @@ module.exports = function(config) {
     // testing framework to use (jasmine/mocha/qunit/...)
     frameworks: ['jasmine'],
 
+    ngHtml2JsPreprocessor: {
+      stripPrefix: 'app/',
+      // prependPrefix: 'app/',
+    },
+
     preprocessors: {
-      'app/scripts/directives/templates/**/*.html': ['html2js']
+      'app/scripts/directives/templates/*.html': 'ng-html2js'
     },
     // list of files / patterns to load in the browser
     files: [
@@ -31,7 +36,7 @@ module.exports = function(config) {
       'bower_components/angular-touch/angular-touch.js',
       'app/scripts/**/*.js',
       //'test/mock/**/*.js',
-      'app/scripts/directives/templates/**/*.html',
+      'app/scripts/directives/templates/*.html',
       'test/spec/**/*.js'
     ],
 
@@ -56,7 +61,7 @@ module.exports = function(config) {
     // Which plugins to enable
     plugins: [
       'karma-jasmine',
-      'karma-html2js-preprocessor',
+      'karma-ng-html2js-preprocessor',
       // 'karma-chrome-launcher',
       'karma-phantomjs-launcher',
     ],

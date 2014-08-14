@@ -108,12 +108,20 @@ body {
   width: 1200px;
   /*margin-left: -200px;*/
 }
+.navi-list li,
+.navi-list li i,
+.navi-list li i span{
+  height: 44px;
+}
 .navi-list li{
   list-style: none;
   width: 200px;
+  overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  overflow-x: hidden;
+}
+.navi-list.menu_state_icon li{
+  width: 60px;
 }
 .navi-list > ol{
   display: inline-table;
@@ -121,11 +129,8 @@ body {
 /* .navi-list .heading{
   color: red;
 } */
-.navi-list li{
-  padding-left: 28px;
-}
 .navi-list li:not(disabled){
-  background: #333;
+  background-color: #333;
   color: #f8f8f8;
   cursor: pointer;
 }
@@ -135,10 +140,26 @@ body {
 .navi-list li.active{
   background-color: #777;
 }
-.navi-list li.heading{
-  /*color: blue;*/
-  background-image: url('../images/back_arrow.png');
-  background-size: 24px 24px;
+.navi-list li i{
+  width: 28px;
+  display: block;
+  background-position: center;
   background-repeat: no-repeat;
+  background-size: 24px 24px;
+  float: left;
+}
+.navi-list.menu_state_icon li span{
+  display: none;
+}
+.navi-list li span{
+  line-height: 44px;
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.navi-list li.heading i{
+  /*color: blue;*/
+  background-image: url('../images/back_arrow.png') !important;
 }
 /* ========================================== */

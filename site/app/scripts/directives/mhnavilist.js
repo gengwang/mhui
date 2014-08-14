@@ -15,23 +15,26 @@ angular.module('mhUI')
         scope: {
             /* Data provider for this control. In the format of {items:[{header:'File', icon:'...', items:[...]}]}*/
             menuTree:'=',
-            /* current path in the format of an array, e.g., [0,2,1]. Determines where the current view and selection goes.
+            /* Current path in the format of an array, e.g., [0,2,1]. Determines where the current view and selection goes.
             The view shows the nodes at that level; If the node is a leaf node, it also selects the item on the position. 
             */
             path:'=',
+            /* Determines how we are displayed, e.g., both icons+labels; icons only; labels only (not supported). It has 2 possible values: 'full', 'icons'.*/
+            menuState:'=',
         }, // {} = isolate, true = child, false/undefined = no change
         // controller: function($scope, $element, $attrs, $transclude) {},
         // require: 'ngModel', // Array = multiple requires, ? = optional, ^ = check parent elements
         // restrict: 'A', // E = Element, A = Attribute, C = Class, M = Comment
-        template: '<div class="navi-list">'+
-                    '<ol ng-repeat="items in menuView">'+
-                        '<li ng-repeat="item in items"'+
-                        ' ng-click= handleClick(this)'+
-                        ' ng-class="liClass(this)">{{item.header}}'+
-                        '</li>'+
-                    '</ol>'+
-                  '</div>',
-        // templateUrl: 'scripts/directives/templates/naviList.html',
+        // template: '<div class="navi-list">'
+        //             +'<ol ng-repeat="items in menuView">'
+        //                +'<li ng-repeat="item in items"'
+        //                +' ng-click= handleClick(this)'
+        //                + ' ng-class="liClass(this)">{{item.header}} '
+        //                // +' ng-style={background: pink} '
+        //                +'</li>'
+        //             +'</ol>'
+        //           +'</div>',
+        templateUrl: 'scripts/directives/templates/naviList.html',
         replace: true,
         // transclude: true,
         // compile: function(tElement, tAttrs, function transclude(function(scope, cloneLinkingFn){ return function linking(scope, elm, attrs){}})),
@@ -46,24 +49,43 @@ angular.module('mhUI')
             });
 
             $scope.$watch('path', function(newVal, oldVal){
-                // console.log('path changed to '+newVal)
                 if(!_nodeWithPathAtMenuTree($scope.menuTree, newVal)) {
                     throw('mhNaviList:: invalid path '+newVal);
-                    return;
-                };
+                }
+                _render();
+            });
 
-                _createMenuView();
+            $scope.$watch('menuState', function(newVal, oldVal){
+                // console.log('menu state:: '+newVal);
+                // if(oldVal == newVal) return;
+                // We do this because we don't have a class style named "menu_state_full" but we want our menu state default to "full".
+                if(newVal == undefined) {
+                    newVal = "full";
+                };
+                newVal = newVal.toLowerCase();
+                // 'label' state is not supported for now.
+                var allStates = ['full', 'icon', 'label'].join('').toLowerCase();
+
+                if(allStates.indexOf(oldVal) >= 0)
+                    $(iElm).toggleClass('menu_state_'+oldVal, false);
+
+                if(allStates.indexOf(newVal) >= 0)
+                    $(iElm).toggleClass('menu_state_'+newVal, true);
+
+                _render();
+            });
+
+            var _render = function(){
+                 _createMenuView();
                 // TODO: First need to figure out if the path is valid, then:
                 // Also need to wait until the DOM is actually rendered inside window...
                 timer(function(){
-                    // See if we are at non-leaf or not, if we are, then shift one more:
+                    // TODO: We need a UI test (attach element to window in karma test) to make sure the offset is correct.
                     var olEl = $(iElm).find('ol');
-                    var isActiveNodeNonLeaf = _isNodeNonLeaf(_nodeWithPathAtMenuTree($scope.menuTree, $scope.path))? 1 : 0;
-                    var offset = (newVal.length - 1 + isActiveNodeNonLeaf) * olEl.outerWidth()*(-1);
+                    var offset = ($scope.menuView.length - 1) * olEl.outerWidth()*(-1);
                     iElm.css('margin-left', offset+'px');
                 });
-
-            });
+            };
             /* Helper. It traverses the treeMenu and marks all the nodes with their "path"s, which are denoted as an array. For example, [1,2,1] means the node is located at menuTere.items[1].items[2].items[1]. The 'path' is stored in the '__path' property of each node item.
             */
             var _markPathsForNodes = function(){
@@ -141,15 +163,14 @@ angular.module('mhUI')
             var _isActive = function(el){
                 var index = el.$index,
                     pIndex = el.$parent.$index;
-                if (!$scope.path || !$scope.path.length || $scope.path.length - 1 < pIndex || 0 > pIndex) return false;
-                if(pIndex == 0){
-                    return $scope.path[pIndex] == index;
-                }else{
-                    return $scope.path[pIndex] == index - 1;
+
+                if (!$scope.path || !$scope.path.length || $scope.path.length - 1 < pIndex || 0 > pIndex) {
+                    return false;
                 }
+
+                return (pIndex === 0)? $scope.path[pIndex] == index: $scope.path[pIndex] == index - 1;
             };
             var _isNonLeaf = function(el){
-                // return el.item != undefined && el.item.items != undefined ;
                 return el.item != undefined && el.item.items != undefined && el.item.items.length > 0;
             }
             $scope.liClass = function(el){
@@ -159,9 +180,11 @@ angular.module('mhUI')
                         // 'disabled': false,
                         };
             };
+            $scope.iconUrl = function(el){
+                return el.item.icon? {'background-image': 'url('+el.item.icon+')'} : {};
+            };
             $scope.handleClick = function(el){
                 // console.log(el+' is clicked! and i guess it is: '+el.item.header+'; index: '+el.$index+'; pIndex: '+el.$parent.$index+ '; path: '+el.item.__path+'; is it a leaf? '+!_isNonLeaf(el));
-
                 var _proposedPath;
                 // Determine whether we should drill up or down:
                 if(_isHeading(el)){
@@ -180,22 +203,6 @@ angular.module('mhUI')
                 }
                 $scope.path = _proposedPath;
             }
-            /* Go up one level. */
-            $scope.drillDown = function(el){
-
-            };
-            /* Go down one level.*/
-            $scope.drillUp = function(el){
-
-            };
-            /* Show or hide labels.*/
-            $scope.toggleLabels = function(show){
-
-            };
-            /* Show or hide icons.*/
-            $scope.toggleIcons = function(show){
-
-            };
       }
     };
   }]);

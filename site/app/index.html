@@ -64,7 +64,11 @@
     <script src="scripts/directives/mhnavilist.js"></script>
     <!-- endbuild -->
     <div class="foo" ng-controller="NaviListCtrl">
-      <mh-navi-list path="path" menu-tree="menuTree"></mh-navi-list>
+      <mh-navi-list 
+        path="path" 
+        menu-tree="menuTree" 
+        menu-state="menuState">
+      </mh-navi-list>
     </div>
 </body>
 </html>

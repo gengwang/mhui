@@ -8,19 +8,22 @@ describe('Directive: mhNaviList', function () {
   // index.html => scripts/directives/templates/
   // karma.config.js => ../app/scripts/directives/templates/naviList.html
   beforeEach(module('mhUI'));
+  beforeEach(module('scripts/directives/templates/naviList.html'));
 
   var element,
     scope;
 
   beforeEach(inject(function ($rootScope, $compile) {
     scope = $rootScope.$new();
-    var menuTree = {items:[
-                    {header:'File', items:[{header:'New File'}, {header:'Open File'}]},
-                    {header:'Edit', items:[{header:'Copy'}, {header:'Paste'}, {header:'Undo Selection', items:[{header:'Soft Undo'}, {header:'Undo Insert Characters', items:[{header:'Undo Insert All'}]}]}]},
-                    {header:'Selection', items:[{header:'Select All'}]},
-                    {header:'Find'}
+    var menuTree =  {items:[
+                    {header:'File', icon:'../images/t_stop.png', items:[{header:'New File', icon:'../images/license_plate.png'}, {header:'Open File', icon:'../images/nav_placeholder.png'}]},
+                    {header:'Edit', icon:'../images/nav_placeholder.png', items:[{header:'Copy', icon:'../images/field_init.png'}, {header:'Paste', icon:'../images/nav_placeholder.png'}, 
+                    {header:'Undo Selection', icon:'../images/license_plate.png', items:[{header:'Soft Undo', icon:'../images/field_init.png'}, {header:'Undo Insert Characters', icon:'../images/t_stop.png', items:[{header:'Undo Insert All', icon:'../images/license_plate.png'}]}]}]},
+                    {header:'Selection', items:[{header:'Select All', icon:'../images/nav_placeholder.png'}]},
+                    {header:'Find', icon:'../images/field_init.png'}
                 ]};
     scope.menuTree = menuTree;
+    // scope.menuState = 'icon';
     // scope.path = [];
     element = angular.element('<mh-navi-list path="path" menu-tree="menuTree"></mh-navi-list>');
     $compile(element)(scope);
@@ -37,59 +40,59 @@ describe('Directive: mhNaviList', function () {
   it("should expect items to be marked with paths", function() {
     expect(scope.menuTree.items[3].__path).toEqual([3]);
     expect(scope.menuTree.items[1].items[2].header).toEqual('Undo Selection');
-    expect(scope.menuTree.items[1].items[2].items.length).toBe(2);
+    expect(scope.menuTree.items[1].items[2].items.length).toEqual(2);
     expect(scope.menuTree.items[1].items[2].items[1].items[0].header).toEqual('Undo Insert All');
     expect(scope.menuTree.items[1].items[2].items[1].items[0].__path).toEqual([1,2,1,0]);
   });
 
   it("should create view when the component is initialized", function() {
-    expect(element.find('ol').length).toBe(1);
-    expect(element.find('li').length).toBe(4);
-    expect(element.find('li').eq(0).text()).toBe('File');
+    expect(element.find('ol').length).toEqual(1);
+    expect(element.find('li').length).toEqual(4);
+    expect(element.find('li').eq(0).text()).toEqual('File');
   });
 
   it("should create view based on input path", function() {
     scope.path = [];
     scope.$apply();
     // console.log('element: ', element);
-    expect(element.find('ol').length).toBe(1);
-    expect(element.find('li').length).toBe(4);
-    expect(element.find('li').eq(3).text()).toBe('Find');
+    expect(element.find('ol').length).toEqual(1);
+    expect(element.find('li').length).toEqual(4);
+    expect(element.find('li').eq(3).text()).toEqual('Find');
     
     scope.path = [1, 0];
     scope.$apply();
-    expect(element.find('ol').length).toBe(2);
-    expect(element.find('li').length).toBe(8);
-    expect(element.find('li').eq(4).text()).toBe('Edit');
-    expect(element.find('li').eq(5).text()).toBe('Copy');
+    expect(element.find('ol').length).toEqual(2);
+    expect(element.find('li').length).toEqual(8);
+    expect(element.find('li').eq(4).text()).toEqual('Edit');
+    expect(element.find('li').eq(5).text()).toEqual('Copy');
 
     scope.path = [1,2,1,0];
     scope.$apply();
-    expect(element.find('ol').length).toBe(4);
-    expect(element.find('li').length).toBe(13);
+    expect(element.find('ol').length).toEqual(4);
+    expect(element.find('li').length).toEqual(13);
     expect(element.find('li').eq(12).text()).toEqual('Undo Insert All');
 
     scope.path = [1, 2];
     scope.$apply();
-    expect(element.find('ol').length).toBe(3);
-    expect(element.find('li').length).toBe(11);
-    expect(element.find('li').eq(0).text()).toBe('File');
-    expect(element.find('li').eq(1).text()).toBe('Edit');
-    expect(element.find('li').eq(4).text()).toBe('Edit');
+    expect(element.find('ol').length).toEqual(3);
+    expect(element.find('li').length).toEqual(11);
+    expect(element.find('li').eq(0).text()).toEqual('File');
+    expect(element.find('li').eq(1).text()).toEqual('Edit');
+    expect(element.find('li').eq(4).text()).toEqual('Edit');
     expect(element.find('li').eq(10).text()).toEqual('Undo Insert Characters');
 
     scope.path = [1,2,1,0];
     scope.$apply();
     scope.path = [3];
     scope.$apply();
-    expect(element.find('ol').length).toBe(1);
+    expect(element.find('ol').length).toEqual(1);
   });
 
     // TODO. Expect error is thrown and the view doesn't change. The default should be []
   /*it("should create view for the home list if invalid path is provided", function() {
      scope.path = [1, 6];
      scope.$apply();
-     expect(element.find('ol').length).toBe(1);
+     expect(element.find('ol').length).toEqual(1);
   });*/
 
   // TODO/FIXME: toHaveClass undefined. Have to use: expect(element.find('li').eq(4).attr('class')).toContain('heading'); 
@@ -103,11 +106,11 @@ describe('Directive: mhNaviList', function () {
   it("should highlight all active items in the view", function() {
     scope.path = [1,2,1,0];
     scope.$apply();
-    expect(element.find('li').eq(1).text()).toBe('Edit');
+    expect(element.find('li').eq(1).text()).toEqual('Edit');
     expect(element.find('li').eq(1).attr('class')).toContain('active');
-    expect(element.find('li').eq(7).text()).toBe('Undo Selection');
+    expect(element.find('li').eq(7).text()).toEqual('Undo Selection');
     expect(element.find('li').eq(7).attr('class')).toContain('active');
-    expect(element.find('li').eq(12).text()).toBe('Undo Insert All');
+    expect(element.find('li').eq(12).text()).toEqual('Undo Insert All');
     expect(element.find('li').eq(12).attr('class')).toContain('active');
 
     // TODO: Should not highlight any item if the path is []:
@@ -127,7 +130,7 @@ describe('Directive: mhNaviList', function () {
     scope.path = [1];
     scope.$apply();
     element.find('li').eq(4).click();
-    expect(scope.path.length).toBe(0);
+    expect(scope.path.length).toEqual(0);
 
     // non-leaf
     scope.path = [1,2];
@@ -145,7 +148,7 @@ describe('Directive: mhNaviList', function () {
     scope.path = [1,1];
     scope.$apply();
     element.find('li').eq(4).click();
-    expect(scope.path.length).toBe(0);
+    expect(scope.path.length).toEqual(0);
   });
 
   it("should drill down to the right view when an item is clicked", function(){
@@ -162,6 +165,12 @@ describe('Directive: mhNaviList', function () {
     // at [1,2]:
     element.find('li').eq(7).click();
     expect(scope.path).toEqual([1,2]);
+
+    scope.path = [1,0];
+    scope.$apply();
+    // at [2]:
+    element.find('li').eq(2).click();
+    expect(scope.path).toEqual([2]);
   });
 
   // Appears it's not loading? Or maybe timeout? http://jasmine.github.io/2.0/introduction.html
@@ -174,4 +183,10 @@ describe('Directive: mhNaviList', function () {
     console.log('background-image:: '+element.find('.heading').eq(0).css('width'))
     expect(element.find('.heading').eq(0).css('background-image')).toContain('png');
   })*/
+// TODO: This appears to require window as well.
+  /*it("should toggle to the right menu state", function(){
+    scope.menuState = "icon";
+    scope.$apply();
+    expect(element.attr('class')).toContain('menu_state_icon');
+  });*/
 });
