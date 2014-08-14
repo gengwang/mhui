@@ -44,7 +44,7 @@ angular.module('mhUI')
       // }
       link: function($scope, iElm, iAttrs, controller) {
             $scope.$watch('menuTree', function(newVal, oldVal){
-                // TODO: We want this to be only called when the component is initialized but here it seems to watch the 'menuTree' property.
+                // TODO: We want this to be only called when the component is initialized but here it seems to watch the 'menuTree' property. On a second thought, even we construct menuTree property more economically, isn't the DOM tree still going to be re-rendered completely?
                 _markPathsForNodes();
             });
 
@@ -58,12 +58,13 @@ angular.module('mhUI')
             $scope.$watch('menuState', function(newVal, oldVal){
                 // console.log('menu state:: '+newVal);
                 // if(oldVal == newVal) return;
+
                 // We do this because we don't have a class style named "menu_state_full" but we want our menu state default to "full".
                 if(newVal == undefined) {
                     newVal = "full";
                 };
                 newVal = newVal.toLowerCase();
-                // 'label' state is not supported for now.
+                // 'label' state is not supported for now. 'full' and null/undefined is actually the same because we don't have a class style named "menu_state_full".
                 var allStates = ['full', 'icon', 'label'].join('').toLowerCase();
 
                 if(allStates.indexOf(oldVal) >= 0)
@@ -143,6 +144,7 @@ angular.module('mhUI')
                 for(var index in $scope.path){
                     var path = pathAtIndex($scope.path, index);
                     var node = _nodeWithPathAtMenuTree($scope.menuTree, path);
+                    if(node.disabled) return;
                     if(_isNodeNonLeaf(node)){
                         var items = node.items.slice();
                         // Add header to top of the items:
@@ -170,6 +172,9 @@ angular.module('mhUI')
 
                 return (pIndex === 0)? $scope.path[pIndex] == index: $scope.path[pIndex] == index - 1;
             };
+            var _isDisabled = function(el){
+                return el.item != undefined && el.item.disabled;
+            };
             var _isNonLeaf = function(el){
                 return el.item != undefined && el.item.items != undefined && el.item.items.length > 0;
             }
@@ -177,13 +182,14 @@ angular.module('mhUI')
                 return {
                         'heading': _isHeading(el),
                         'active': _isActive(el),
-                        // 'disabled': false,
+                        'disabled': _isDisabled(el),
                         };
             };
             $scope.iconUrl = function(el){
                 return el.item.icon? {'background-image': 'url('+el.item.icon+')'} : {};
             };
             $scope.handleClick = function(el){
+                if(el.item.disabled){return;}
                 // console.log(el+' is clicked! and i guess it is: '+el.item.header+'; index: '+el.$index+'; pIndex: '+el.$parent.$index+ '; path: '+el.item.__path+'; is it a leaf? '+!_isNonLeaf(el));
                 var _proposedPath;
                 // Determine whether we should drill up or down:

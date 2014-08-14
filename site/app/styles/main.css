@@ -140,6 +140,9 @@ body {
 .navi-list li.active{
   background-color: #777;
 }
+.navi-list li.disabled span{
+  color: #666;
+}
 .navi-list li i{
   width: 28px;
   display: block;
@@ -147,6 +150,9 @@ body {
   background-repeat: no-repeat;
   background-size: 24px 24px;
   float: left;
+}
+.navi-list li.disabled i{
+  opacity: 0.3;
 }
 .navi-list.menu_state_icon li span{
   display: none;

@@ -19,7 +19,7 @@ describe('Directive: mhNaviList', function () {
                     {header:'File', icon:'../images/t_stop.png', items:[{header:'New File', icon:'../images/license_plate.png'}, {header:'Open File', icon:'../images/nav_placeholder.png'}]},
                     {header:'Edit', icon:'../images/nav_placeholder.png', items:[{header:'Copy', icon:'../images/field_init.png'}, {header:'Paste', icon:'../images/nav_placeholder.png'}, 
                     {header:'Undo Selection', icon:'../images/license_plate.png', items:[{header:'Soft Undo', icon:'../images/field_init.png'}, {header:'Undo Insert Characters', icon:'../images/t_stop.png', items:[{header:'Undo Insert All', icon:'../images/license_plate.png'}]}]}]},
-                    {header:'Selection', items:[{header:'Select All', icon:'../images/nav_placeholder.png'}]},
+                    {header:'Selection', disabled: true, icon:'../images/nav_placeholder.png', items:[{header:'Select All', icon:'../images/nav_placeholder.png'}]},
                     {header:'Find', icon:'../images/field_init.png'}
                 ]};
     scope.menuTree = menuTree;
@@ -168,9 +168,9 @@ describe('Directive: mhNaviList', function () {
 
     scope.path = [1,0];
     scope.$apply();
-    // at [2]:
-    element.find('li').eq(2).click();
-    expect(scope.path).toEqual([2]);
+    // at [1]:
+    element.find('li').eq(1).click();
+    expect(scope.path).toEqual([1]);
   });
 
   // Appears it's not loading? Or maybe timeout? http://jasmine.github.io/2.0/introduction.html
@@ -184,9 +184,25 @@ describe('Directive: mhNaviList', function () {
     expect(element.find('.heading').eq(0).css('background-image')).toContain('png');
   })*/
 // TODO: This appears to require window as well.
-  /*it("should toggle to the right menu state", function(){
+  /*it("should toggle to the right menu state and the path should place the menu in the correct position", function(){
     scope.menuState = "icon";
     scope.$apply();
     expect(element.attr('class')).toContain('menu_state_icon');
   });*/
+  describe('disabled items', function(){
+    it('should appear disabled', function(){
+      expect(element.find('li').eq(2).text()).toEqual('Selection');
+      expect(element.find('li').eq(2).attr('class')).toContain('disabled');
+    });
+
+    it('should not display children items', function(){
+      scope.path = [];
+      scope.$apply();
+      expect(element.find('ol').length).toEqual(1);
+      scope.path = [2];
+      expect(element.find('li').eq(2).text()).toEqual('Selection');
+      element.find('li').eq(2).click();
+      expect(element.find('ol').length).toEqual(1);
+    })
+  })
 });

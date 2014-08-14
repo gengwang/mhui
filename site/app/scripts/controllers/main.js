@@ -21,7 +21,7 @@ angular.module('mhUI')
                     {header:'File', icon:'../images/t_stop.png', items:[{header:'New File', icon:'../images/license_plate.png'}, {header:'Open File', icon:'../images/nav_placeholder.png'}]},
                     {header:'Edit', icon:'../images/nav_placeholder.png', items:[{header:'Copy', icon:'../images/field_init.png'}, {header:'Paste', icon:'../images/nav_placeholder.png'}, 
                     {header:'Undo Selection', icon:'../images/license_plate.png', items:[{header:'Soft Undo', icon:'../images/field_init.png'}, {header:'Undo Insert Characters', icon:'../images/t_stop.png', items:[{header:'Undo Insert All', icon:'../images/license_plate.png'}]}]}]},
-                    {header:'Selection', items:[{header:'Select All', icon:'../images/nav_placeholder.png'}]},
+                    {header:'Selection', disabled: true, icon:'../images/nav_placeholder.png', items:[{header:'Select All', icon:'../images/nav_placeholder.png'}]},
                     {header:'Find', icon:'../images/field_init.png'}
                 ]};
     // $scope.path = [1,2,1,0];
