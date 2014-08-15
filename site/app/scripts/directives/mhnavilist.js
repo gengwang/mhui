@@ -5,6 +5,7 @@
  * @name mhUI.directive:mhNaviList
  * @description
  * # mhNaviList
+ TODO: Support for HTML feeding data.
  */
 angular.module('mhUI')
   .directive('mhNaviList', ['$timeout',  function (timer) {
@@ -13,7 +14,8 @@ angular.module('mhUI')
         // priority: 1,
         // terminal: true,
         scope: {
-            /* Data provider for this control. In the format of {items:[{header:'File', icon:'...', items:[...]}]}*/
+            /* Data provider for this control. In the format of {items:[{header:'File', icon:'...', items:[...]}]}
+            TODO: Support for HTML feeding data.*/
             menuTree:'=',
             /* Current path in the format of an array, e.g., [0,2,1]. Determines where the current view and selection goes.
             The view shows the nodes at that level; If the node is a leaf node, it also selects the item on the position. 
@@ -21,6 +23,8 @@ angular.module('mhUI')
             path:'=',
             /* Determines how we are displayed, e.g., both icons+labels; icons only; labels only (not supported). It has 2 possible values: 'full', 'icons'.*/
             menuState:'=',
+            /* Callback for the user when the path is changed. Clicking a disabled node doesn't cause a path change. To callback in the client code, use: <mh-navi-list path-changed="pathChanged(node, path)" .../> in the HTML. node.header returns the header.*/
+            pathChanged:'&'
         }, // {} = isolate, true = child, false/undefined = no change
         // controller: function($scope, $element, $attrs, $transclude) {},
         // require: 'ngModel', // Array = multiple requires, ? = optional, ^ = check parent elements
@@ -52,6 +56,15 @@ angular.module('mhUI')
                 if(!_nodeWithPathAtMenuTree($scope.menuTree, newVal)) {
                     throw('mhNaviList:: invalid path '+newVal);
                 }
+                if($scope.pathChanged){
+                    var node = _nodeWithPathAtMenuTree($scope.menuTree, newVal);
+                    // TODO(?): oldPath, oldHeader, drillDirection?
+                    $scope.pathChanged(
+                    {
+                       header: node.header,
+                       path: newVal
+                    });
+                }
                 _render();
             });
 
@@ -78,8 +91,7 @@ angular.module('mhUI')
 
             var _render = function(){
                  _createMenuView();
-                // TODO: First need to figure out if the path is valid, then:
-                // Also need to wait until the DOM is actually rendered inside window...
+                // TODO: First need to figure out if the path is valid.
                 timer(function(){
                     // TODO: We need a UI test (attach element to window in karma test) to make sure the offset is correct.
                     var olEl = $(iElm).find('ol');

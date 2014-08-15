@@ -27,5 +27,9 @@ angular.module('mhUI')
     // $scope.path = [1,2,1,0];
     $scope.path = [1,2];
 
-    $scope.menuState = 'icon';
+    // $scope.menuState = 'icon';
+
+    $scope.pathChanged = function(header, path){
+      console.log('path changed! path: '+path+'; header: '+header);
+    }
   });

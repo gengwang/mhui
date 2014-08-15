@@ -15,6 +15,7 @@ describe('Directive: mhNaviList', function () {
 
   beforeEach(inject(function ($rootScope, $compile) {
     scope = $rootScope.$new();
+    // scope.pathChanged = jasmine.createSpy();
     var menuTree =  {items:[
                     {header:'File', icon:'../images/t_stop.png', items:[{header:'New File', icon:'../images/license_plate.png'}, {header:'Open File', icon:'../images/nav_placeholder.png'}]},
                     {header:'Edit', icon:'../images/nav_placeholder.png', items:[{header:'Copy', icon:'../images/field_init.png'}, {header:'Paste', icon:'../images/nav_placeholder.png'}, 
@@ -25,12 +26,12 @@ describe('Directive: mhNaviList', function () {
     scope.menuTree = menuTree;
     // scope.menuState = 'icon';
     // scope.path = [];
-    element = angular.element('<mh-navi-list path="path" menu-tree="menuTree"></mh-navi-list>');
+    element = angular.element('<mh-navi-list path="path" menu-tree="menuTree" path-changed="pathChanged(header, path)"></mh-navi-list>');
     $compile(element)(scope);
     scope.$apply();
     return element;
   }));
-
+  
   it("should expect the mock menuTree data", function() {
     expect(scope).toBeDefined();
     expect(scope.menuTree.items.length).toEqual(4);
@@ -204,5 +205,45 @@ describe('Directive: mhNaviList', function () {
       element.find('li').eq(2).click();
       expect(element.find('ol').length).toEqual(1);
     })
-  })
+  });
+  describe("path changed callback", function() {
+      beforeEach(function(){
+        scope.pathChanged = jasmine.createSpy('pathChanged');
+      });
+      it('should call path changed callback when a non-disabled item is clicked', function(){
+        scope.path = [1];
+        scope.$apply();
+        // We need to reset the call because pathChanged was already called when the spy is created.
+        expect(element.find('li').eq(5).text()).toEqual('Copy');
+        scope.pathChanged.reset();
+        element.find('li').eq(5).click();
+        expect(scope.pathChanged).toHaveBeenCalled();
+        expect(scope.pathChanged).toHaveBeenCalledWith('Copy', [1,0]);
+    });
+    it('should not call path changed callback when a disabled item is clicked', function(){
+        scope.path = [];
+        scope.$apply();
+        expect(element.find('li').eq(2).text()).toEqual('Selection');
+        expect(element.find('li').eq(2).attr('class')).toContain('disabled');
+        scope.pathChanged.reset();
+        element.find('li').eq(2).click();
+        expect(scope.path).toEqual([]);
+        expect(scope.pathChanged).not.toHaveBeenCalled();
+    });
+
+    it('should call path changed callback when a header is clicked', function(){
+        scope.path = [1,2,0];
+        scope.$apply();
+        expect(element.find('li').eq(8).text()).toEqual('Undo Selection');
+        scope.pathChanged.reset();
+        element.find('li').eq(8).click();
+        expect(scope.pathChanged).toHaveBeenCalledWith('Edit', [1]);
+        expect(element.find('li').eq(4).text()).toEqual('Edit');
+        scope.pathChanged.reset();
+        element.find('li').eq(4).click();
+        // going back Home.
+        expect(scope.pathChanged).toHaveBeenCalledWith(undefined, []);
+    });
+  });
+  
 });
