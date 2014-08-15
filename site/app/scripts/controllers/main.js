@@ -29,7 +29,7 @@ angular.module('mhUI')
 
     // $scope.menuState = 'icon';
 
-    $scope.pathChanged = function(header, path){
-      console.log('path changed! path: '+path+'; header: '+header);
+    $scope.pathChanged = function(info){
+      console.log('path changed! path: '+info.path+'; header: '+info.header);
     }
   });

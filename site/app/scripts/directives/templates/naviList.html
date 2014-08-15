@@ -1,5 +1,5 @@
 <div class="navi-list">
   <ol ng-repeat="items in menuView">
-   <li ng-repeat="item in items" ng-click= handleClick(this) ng-class="liClass(this)"><i ng-style="iconUrl(this)"></i><span>{{item.header}}</span></li>
+   <li ng-repeat="item in items" ng-click= handleClick(this) ng-class="liClass(this)"><i class="head" ng-style="iconUrl(this)"></i><span>{{item.header}}</span><i ng-class="tailLiClass(this)"></i></li>
  </ol>
 </div>

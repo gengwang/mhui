@@ -13,7 +13,8 @@ angular
     'ngAnimate',
     'ngCookies',
     'ngRoute',
-    'ngTouch'
+    'ngTouch',
+    'mhUI.naviList'
   ])
   .config(function ($routeProvider) {
     $routeProvider

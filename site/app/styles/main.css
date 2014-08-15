@@ -78,26 +78,20 @@ body {
     border-bottom: 0;
   }
 }
-
+/* ========================================== */
 /* mhnavlist
 
   NaviList component
+  TODO: Currently the image file paths are relative to the loading html. 
  */
- /*container of the list*/
-#sidebar{
-  width: 200px;
-  background:#d8d8d8;
-  position: absolute;
-  top: 40px;
-  left: 200px;
-  border: 1px solid orange;
-  /*overflow: hidden;*/
-}
-/* TMP */
+/* mhNaviList */
+/* TMP: placeholder for the naviList component*/
 .foo {
   position: absolute;
   top: 100px;
   left: 200px;
+  width: 200px;
+  overflow: hidden;
 }
 .navi-list, .navi-list > ol{
   padding: 0;
@@ -124,24 +118,24 @@ body {
   width: 60px;
 }
 .navi-list > ol{
-  display: inline-table;
+  float: left;
 }
-/* .navi-list .heading{
-  color: red;
-} */
-.navi-list li:not(disabled){
+.navi-list li:not(disabled),
+.navi-list li.disabled:hover{
   background-color: #333;
+}
+.navi-list li:not(disabled){
   color: #f8f8f8;
   cursor: pointer;
 }
 .navi-list li:hover{
   background-color: #666;
 }
+.navi-list li.disabled:hover{
+  cursor: default;
+}
 .navi-list li.active{
   background-color: #777;
-}
-.navi-list li.disabled span{
-  color: #666;
 }
 .navi-list li i{
   width: 28px;
@@ -151,7 +145,7 @@ body {
   background-size: 24px 24px;
   float: left;
 }
-.navi-list li.disabled i{
+.navi-list li.disabled *{
   opacity: 0.3;
 }
 .navi-list.menu_state_icon li span{
@@ -159,13 +153,19 @@ body {
 }
 .navi-list li span{
   line-height: 44px;
-  display: block;
+  max-width: 140px;
+  display: inline-block;
+  float: left;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.navi-list li.heading i{
+.navi-list li.heading i.head{
   /*color: blue;*/
   background-image: url('../images/back_arrow.png') !important;
+}
+.navi-list li i.tail {
+  background-image: url('../images/forward_arrow.png');
+  float: right;
 }
 /* ========================================== */

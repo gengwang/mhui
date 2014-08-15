@@ -5,17 +5,26 @@
  * @name mhUI.directive:mhNaviList
  * @description
  * # mhNaviList
+ Usage:
+    <navi-list 
+        path="path" 
+        menu-tree="menuTree" 
+        menu-state="menuState"
+        path-changed="pathChanged(info)">
+    </navi-list>
+
  TODO: Support for HTML feeding data.
+ TODO: path for the templateUrl very likely needs to be modified by the client.
  */
-angular.module('mhUI')
-  .directive('mhNaviList', ['$timeout',  function (timer) {
+angular.module('mhUI.naviList', [])
+  .directive('naviList', ['$timeout',  function (timer) {
     return {
         // name: '',
         // priority: 1,
         // terminal: true,
         scope: {
-            /* Data provider for this control. In the format of {items:[{header:'File', icon:'...', items:[...]}]}
-            TODO: Support for HTML feeding data.*/
+            /* Data provider for this control. In the format of {items:[{header:'File', disabled:true, icon:'...', items:[...]}]}
+            TODO: Support for HTML data provider.*/
             menuTree:'=',
             /* Current path in the format of an array, e.g., [0,2,1]. Determines where the current view and selection goes.
             The view shows the nodes at that level; If the node is a leaf node, it also selects the item on the position. 
@@ -23,7 +32,7 @@ angular.module('mhUI')
             path:'=',
             /* Determines how we are displayed, e.g., both icons+labels; icons only; labels only (not supported). It has 2 possible values: 'full', 'icons'.*/
             menuState:'=',
-            /* Callback for the user when the path is changed. Clicking a disabled node doesn't cause a path change. To callback in the client code, use: <mh-navi-list path-changed="pathChanged(node, path)" .../> in the HTML. node.header returns the header.*/
+            /* Callback for the user when the path is changed. Clicking a disabled node doesn't cause a path change. To callback in the client code, use: <navi-list path-changed="pathChanged(info)" .../> in the HTML. info.header returns the new header; info.path returns the new path.*/
             pathChanged:'&'
         }, // {} = isolate, true = child, false/undefined = no change
         // controller: function($scope, $element, $attrs, $transclude) {},
@@ -34,7 +43,6 @@ angular.module('mhUI')
         //                +'<li ng-repeat="item in items"'
         //                +' ng-click= handleClick(this)'
         //                + ' ng-class="liClass(this)">{{item.header}} '
-        //                // +' ng-style={background: pink} '
         //                +'</li>'
         //             +'</ol>'
         //           +'</div>',
@@ -58,12 +66,9 @@ angular.module('mhUI')
                 }
                 if($scope.pathChanged){
                     var node = _nodeWithPathAtMenuTree($scope.menuTree, newVal);
+                    var info = {info:{ header: node.header, path: newVal}};
                     // TODO(?): oldPath, oldHeader, drillDirection?
-                    $scope.pathChanged(
-                    {
-                       header: node.header,
-                       path: newVal
-                    });
+                    $scope.pathChanged(info);
                 }
                 _render();
             });
@@ -184,6 +189,7 @@ angular.module('mhUI')
 
                 return (pIndex === 0)? $scope.path[pIndex] == index: $scope.path[pIndex] == index - 1;
             };
+            /* Is the node disabled. The current implementation doesn't make any assumption about the relationship of the node with its child nodes, e.g., whether a disabled node should also cause its children to be disabled.*/
             var _isDisabled = function(el){
                 return el.item != undefined && el.item.disabled;
             };
@@ -199,6 +205,9 @@ angular.module('mhUI')
             };
             $scope.iconUrl = function(el){
                 return el.item.icon? {'background-image': 'url('+el.item.icon+')'} : {};
+            };
+            $scope.tailLiClass = function(el){
+                return {'tail ':_isNonLeaf(el) && !el.$first};
             };
             $scope.handleClick = function(el){
                 if(el.item.disabled){return;}

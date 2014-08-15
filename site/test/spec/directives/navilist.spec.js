@@ -1,13 +1,10 @@
 'use strict';
 
-describe('Directive: mhNaviList', function () {
+describe('Directive: mhUI.naviList', function () {
 
   // load the directive's module
-  // This file (test/spec/directives/mhNaviList.js)?=> ../../../app/scripts/directives/templates/naviList.html
-  // App => app/scripts/directives/templates/naviList.html
-  // index.html => scripts/directives/templates/
-  // karma.config.js => ../app/scripts/directives/templates/naviList.html
-  beforeEach(module('mhUI'));
+  beforeEach(module('mhUI.naviList'));
+  // and template
   beforeEach(module('scripts/directives/templates/naviList.html'));
 
   var element,
@@ -26,7 +23,7 @@ describe('Directive: mhNaviList', function () {
     scope.menuTree = menuTree;
     // scope.menuState = 'icon';
     // scope.path = [];
-    element = angular.element('<mh-navi-list path="path" menu-tree="menuTree" path-changed="pathChanged(header, path)"></mh-navi-list>');
+    element = angular.element('<navi-list path="path" menu-tree="menuTree" path-changed="pathChanged(info)"></navi-list>');
     $compile(element)(scope);
     scope.$apply();
     return element;
@@ -218,7 +215,7 @@ describe('Directive: mhNaviList', function () {
         scope.pathChanged.reset();
         element.find('li').eq(5).click();
         expect(scope.pathChanged).toHaveBeenCalled();
-        expect(scope.pathChanged).toHaveBeenCalledWith('Copy', [1,0]);
+        expect(scope.pathChanged).toHaveBeenCalledWith({header:'Copy', path:[1,0]});
     });
     it('should not call path changed callback when a disabled item is clicked', function(){
         scope.path = [];
@@ -237,12 +234,12 @@ describe('Directive: mhNaviList', function () {
         expect(element.find('li').eq(8).text()).toEqual('Undo Selection');
         scope.pathChanged.reset();
         element.find('li').eq(8).click();
-        expect(scope.pathChanged).toHaveBeenCalledWith('Edit', [1]);
+        expect(scope.pathChanged).toHaveBeenCalledWith({header:'Edit', path:[1]});
         expect(element.find('li').eq(4).text()).toEqual('Edit');
         scope.pathChanged.reset();
         element.find('li').eq(4).click();
         // going back Home.
-        expect(scope.pathChanged).toHaveBeenCalledWith(undefined, []);
+        expect(scope.pathChanged).toHaveBeenCalledWith({header:undefined, path:[]});
     });
   });
   
